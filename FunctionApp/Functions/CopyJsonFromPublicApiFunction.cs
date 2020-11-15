@@ -1,12 +1,11 @@
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace DeviconTestFunctionApp
 {
@@ -15,50 +14,45 @@ namespace DeviconTestFunctionApp
         [FunctionName("CopyJsonFromPublicApiFunction")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "copy-public-api")]
-            HttpRequest req
-            , ExecutionContext executionContext, ILogger log)
+            HttpRequest req, ExecutionContext context, ILogger log)
         {
             log.LogInformation("Copy public API function processed a request.");
 
-            const string blobContainerName = "public-api-files";
-            var storageAccount = GetCloudStorageAccount(executionContext);
-            var blobClient = storageAccount.CreateCloudBlobClient();
+            var container = await PublicBlobContainer.GetAsync(context, log);
+            var helper = new PublicApiHelper(container);
 
-            if (await CreateContainerIfNotExistsTaskAsync(blobClient, blobContainerName))
+            return await helper.ReadData(req, async (count, data) =>
             {
-                log.LogInformation($"Blob container '{blobContainerName}' created");
-            }
-            var container = blobClient.GetContainerReference(blobContainerName);
+                var errorsList = new List<dynamic>();
 
-
-            return await PublicApiHelper.ReadData(req, async (stream, name) =>
-            {
-                await using (stream)
+                await foreach (var pair in data)
                 {
-                    var blobName = $"{name}.json";
+                    if (pair.IsFailed)
+                    {
+                        errorsList.Add(new {name = pair.Name, error = pair.Exception.Message});
+                        continue;
+                    }
+                    var blobName = $"{pair.Name}.json";
                     var blob = container.GetBlockBlobReference(blobName);
                     blob.Properties.ContentType = "application/json";
-                    await blob.UploadFromStreamAsync(stream);
-
-                    return new OkObjectResult($"Blob '{blobName}' uploaded to container '{blobContainerName}' successfully");
+                    var stream = pair.Stream;
+                    await using (stream)
+                    {
+                        await blob.UploadFromStreamAsync(stream);
+                    }
                 }
+
+                var sb = new StringBuilder($"{count - errorsList.Count} blobs uploaded to container '{container.Name}' successfully.");
+                if (errorsList.Count != 0)
+                {
+                    sb.AppendLine($" {errorsList.Count} blobs failed, see details bellow.");
+                    foreach (var error in errorsList)
+                    {
+                        sb.AppendLine($"    {error.name} : {error.error}");
+                    }
+                }
+                return new OkObjectResult(sb.ToString());
             });
-        }
-
-        private static CloudStorageAccount GetCloudStorageAccount(ExecutionContext executionContext)
-        {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(executionContext.FunctionAppDirectory)
-                .AddJsonFile("local.settings.json", true, true)
-                .AddEnvironmentVariables().Build();
-
-            return CloudStorageAccount.Parse(config["AzureWebJobsStorage"]);
-        }
-
-        private static Task<bool> CreateContainerIfNotExistsTaskAsync(CloudBlobClient blobClient, string blobContainerName)
-        {
-            var blobContainer = blobClient.GetContainerReference(blobContainerName);
-            return blobContainer.CreateIfNotExistsAsync();
         }
     }
 }

@@ -27,6 +27,19 @@ namespace DeviconTestFunctionApp
             }
             
         }
+
+        public async Task<string> ReadBodyTextAsync(string requestUri = null)
+        {
+            try
+            {
+                return await _httpClient.GetStringAsync(requestUri ?? string.Empty);
+            }
+            catch (HttpRequestException e)
+            {
+                var uri = new Uri(_httpClient.BaseAddress, requestUri);
+                throw new HttpRequestException($"Error during reading data from '{uri}'. Error: {e.Message}", e) {HResult = e.HResult};
+            }
+        }
     }
 
 
