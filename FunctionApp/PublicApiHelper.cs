@@ -37,19 +37,17 @@ namespace DeviconTestFunctionApp
 
         public async Task<IActionResult> ReadData(HttpRequest req, Func<int, IAsyncEnumerable<ApiEndpointResult>, Task<IActionResult>> func)
         {
-            string api = req.Query["api"];
-            api = api?.ToLowerInvariant();
+            var api = req.Query["api"].ToString()?.ToLowerInvariant();
 
-            string endpoint = req.Query["endpoint"];
-            endpoint = endpoint?.ToLowerInvariant();
+            var endpoints = req.Query["endpoint"].ToString()?.ToLowerInvariant().Split(',') ?? new string[0];
 
             try
             {
                 List<Tuple<string, string>> apiEndpointPairs;
 
-                if (!string.IsNullOrEmpty(api) && !string.IsNullOrEmpty(endpoint))
+                if (!string.IsNullOrEmpty(api) && endpoints.Length != 0)
                 {
-                    apiEndpointPairs = new List<Tuple<string, string>> {new Tuple<string, string>(api, endpoint)};
+                    apiEndpointPairs = endpoints.Where(e => !string.IsNullOrWhiteSpace(e)).Select(e => new Tuple<string, string>(api, e)).ToList();
                 }
                 else
                 {
