@@ -25,7 +25,6 @@ namespace DeviconTestFunctionApp
                 var uri = new Uri(_httpClient.BaseAddress, requestUri);
                 throw new HttpRequestException($"Error during reading data from '{uri}'. Error: {e.Message}", e) {HResult = e.HResult};
             }
-            
         }
 
         public async Task<string> ReadBodyTextAsync(string requestUri = null)

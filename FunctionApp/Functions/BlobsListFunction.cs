@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +30,6 @@ namespace DeviconTestFunctionApp
 
         private static async IAsyncEnumerable<IListBlobItem> GetAllBlobs(this CloudBlobContainer container)
         {
-
             BlobContinuationToken blobContinuationToken = null;
             do
             {
@@ -52,6 +49,5 @@ namespace DeviconTestFunctionApp
                 }
             } while (blobContinuationToken != null);
         }
-
     }
 }

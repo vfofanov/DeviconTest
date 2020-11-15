@@ -12,9 +12,9 @@ namespace DeviconTestFunctionApp
             Exception = exception;
         }
 
-        public string Name { get;  }
-        public Stream Stream { get;  }
-        public Exception Exception { get;  }
+        public string Name { get; }
+        public Stream Stream { get; }
+        public Exception Exception { get; }
         public bool IsFailed => Exception != null;
     }
 }

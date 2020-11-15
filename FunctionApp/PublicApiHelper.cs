@@ -72,7 +72,7 @@ namespace DeviconTestFunctionApp
                 var endpoint = pair.Item2;
 
                 Exception exc = null;
-                Stream stream=null;
+                Stream stream = null;
 
                 try
                 {
@@ -93,7 +93,8 @@ namespace DeviconTestFunctionApp
         ///     Get apis metadata.
         /// </summary>
         /// <returns></returns>
-        public async Task<PublicApiMetadata[]> GetMetadataAsync(bool reload = false) {
+        public async Task<PublicApiMetadata[]> GetMetadataAsync(bool reload = false)
+        {
             var metadataBlob = _metadataContainer?.GetBlockBlobReference(MetadataBlobName);
 
             if (metadataBlob != null && !reload)
