@@ -11,11 +11,11 @@ using Microsoft.Extensions.Logging;
 
 namespace DeviconTestFunctionApp
 {
-    public static class ReadJsonFromPublicApiFunction
+    public static class PublicApiReadFunction
     {
-        [FunctionName("ReadJsonFromPublicApiFunction")]
+        [FunctionName("PublicApiReadFunction")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "read-public-api")]
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "public-api-read")]
             HttpRequest req, ExecutionContext context, ILogger log)
         {
             log.LogInformation("Read public API function processed a request.");
@@ -54,7 +54,7 @@ namespace DeviconTestFunctionApp
                 {
                     await using var stream = pair.Stream;
                     using var reader = new StreamReader(stream);
-                    body = await reader.ReadToEndAsync();    
+                    body = await reader.ReadToEndAsync();
                 }
                 yield return $@"{{""name"":""{name}"",""body"":{body}}}";
             }

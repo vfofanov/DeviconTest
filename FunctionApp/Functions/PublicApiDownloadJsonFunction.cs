@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -12,11 +11,11 @@ using Microsoft.Extensions.Logging;
 
 namespace DeviconTestFunctionApp
 {
-    public static class DownloadJsonFromPublicApiFunction
+    public static class PublicApiDownloadJsonFunction
     {
-        [FunctionName("DownloadJsonFromPublicApiFunction")]
+        [FunctionName("PublicApiDownloadJsonFunction")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "download-public-api")]
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "public-api-download")]
             HttpRequest req, ExecutionContext context, ILogger log)
         {
             log.LogInformation("Download public API function processed a request.");
@@ -66,7 +65,7 @@ namespace DeviconTestFunctionApp
 
                 if (errorsList.Count != 0)
                 {
-                    var entry = zip.CreateEntry($"_errors.json");
+                    var entry = zip.CreateEntry("_errors.json");
                     await using var entryStream = entry.Open();
                     await JsonSerializer.SerializeAsync(entryStream, errorsList);
                 }

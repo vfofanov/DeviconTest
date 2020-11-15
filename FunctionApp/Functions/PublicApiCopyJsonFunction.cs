@@ -9,11 +9,11 @@ using Microsoft.Extensions.Logging;
 
 namespace DeviconTestFunctionApp
 {
-    public static class CopyJsonFromPublicApiFunction
+    public static class PublicApiCopyJsonFunction
     {
-        [FunctionName("CopyJsonFromPublicApiFunction")]
+        [FunctionName("PublicApiCopyJsonFunction")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "copy-public-api")]
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "public-api-copy")]
             HttpRequest req, ExecutionContext context, ILogger log)
         {
             log.LogInformation("Copy public API function processed a request.");
