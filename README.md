@@ -6,7 +6,7 @@ Please choose one of the API’s available on https://sampleapis.com and create 
 
  You can use Azure Function running locally (https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-local) and Azure Storage Emulator (https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator) or use Azure trial account.
  
-> This repository contains solutions that covers more functionality for education reason. Solution for original task you can find in [PublicApiCopyJsonFunction section](####PublicApiCopyJsonFunction)
+> This repository contains solutions that covers more functionality for education reason. Solution for original task you can find in [PublicApiCopyJsonFunction section](#publicapicopyjsonfunctioncs)
  
 ### Functions
 Functions splitted to 2 sections Service(for work with blobs and metadata) and Task(work with api)
