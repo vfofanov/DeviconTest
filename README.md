@@ -1,4 +1,4 @@
-## Test task for Davicon LLC ##
+## Test task for DoItToday LLC ##
 Vasiliy Fofanov
 
 #### Task
